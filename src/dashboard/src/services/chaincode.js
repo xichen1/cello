@@ -12,3 +12,7 @@ export async function uploadChainCode(params) {
     body: params,
   });
 }
+
+export async function getChainCode(params) {
+  return request(`/api/v1/chaincodes/${params.id}`);
+}

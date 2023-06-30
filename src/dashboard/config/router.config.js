@@ -114,6 +114,12 @@ export default [
                 component: './Operator/ChainCode/ChainCode',
               },
               {
+                path: '/operator/chaincode/:id',
+                name: 'Chaincode Detail',
+                component: './Operator/ChainCode/Detail/[id]',
+                hideInMenu: true,
+              },
+              {
                 path: '/operator/userManagement',
                 name: 'userManagement',
                 component: './Operator/UserManagement',
