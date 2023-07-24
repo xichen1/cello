@@ -59,12 +59,11 @@ class ChainCodeDetail extends PureComponent {
       >
         <Card bordered={false}>
           <Descriptions title="Chaincode cc1" column={2}>
-            <Descriptions.Item label="Name">cc1</Descriptions.Item>
-            <Descriptions.Item label="Version">v1</Descriptions.Item>
-            <Descriptions.Item label="Language">golang</Descriptions.Item>
-            <Descriptions.Item label="sha256sum">
-              a971e147ef8f411b4a2476bba1de26b9a9a84553c43a90204f662ca72ee93910
+            <Descriptions.Item label="PackageID">
+              cc1v1:Cc7bb5f50a53c207f68d37e9423c32f968083282e5ffac00d41ffc5768dc1873
             </Descriptions.Item>
+            <Descriptions.Item label="Version">v1</Descriptions.Item>
+            <Descriptions.Item label="Chaincode Language">golang</Descriptions.Item>
             <Descriptions.Item label="Description">This is the description</Descriptions.Item>
           </Descriptions>
           <Divider />
