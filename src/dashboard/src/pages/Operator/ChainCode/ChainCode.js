@@ -3,15 +3,17 @@
 */
 import React, { PureComponent, Fragment } from 'react';
 import { connect, injectIntl, useIntl } from 'umi';
-import { Card, Button, Modal, Input, Upload, Divider, message } from 'antd';
-import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { Card, Button, Modal, Input, Upload, Divider, message, Dropdown, Menu } from 'antd';
+import { PlusOutlined, UploadOutlined, DownOutlined } from '@ant-design/icons';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import StandardTable from '@/components/StandardTable';
-import { Form, Select } from 'antd/lib/index';
+import { Form } from 'antd/lib/index';
+import InstallForm from './forms/InstallForm';
+import ApproveForm from './forms/ApproveForm';
 import styles from './styles.less';
+import CommitForm from './forms/CommitForm';
 
 const FormItem = Form.Item;
-const { Option } = Select;
 
 const UploadChainCode = props => {
   const [form] = Form.useForm();
@@ -31,14 +33,14 @@ const UploadChainCode = props => {
       message.error(
         intl.formatMessage({
           id: 'app.operator.chainCode.form.create.fail',
-          defaultMessage: 'Upload chain code failed',
+          defaultMessage: 'Upload chaincode failed',
         })
       );
     } else {
       message.success(
         intl.formatMessage({
           id: 'app.operator.chainCode.form.create.success',
-          defaultMessage: 'Upload chain code succeed',
+          defaultMessage: 'Upload chaincode succeed',
         })
       );
       form.resetFields();
@@ -68,12 +70,6 @@ const UploadChainCode = props => {
     },
   };
 
-  const languageOptions = ['golang', 'java', 'nodejs'].map(item => (
-    <Option value={item} key={item}>
-      <span style={{ color: '#8c8f88' }}>{item}</span>
-    </Option>
-  ));
-
   const uploadProps = {
     onRemove: () => {
       setFile(null);
@@ -96,7 +92,7 @@ const UploadChainCode = props => {
       destroyOnClose
       title={intl.formatMessage({
         id: 'app.operator.chainCode.form.create.header.title',
-        defaultMessage: 'Upload Chain code',
+        defaultMessage: 'Upload Chaincode',
       })}
       confirmLoading={uploading}
       visible={modalVisible}
@@ -107,124 +103,56 @@ const UploadChainCode = props => {
         <FormItem
           {...formItemLayout}
           label={intl.formatMessage({
-            id: 'app.operator.chainCode.form.create.name',
-            defaultMessage: 'Name',
-          })}
-          name="name"
-          initialValue=""
-          rules={[
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'app.operator.chainCode.form.create.checkName',
-                defaultMessage: 'Please enter the chain code name',
-              }),
-            },
-          ]}
-        >
-          <Input
-            placeholder={intl.formatMessage({
-              id: 'app.operator.chainCode.form.create.name',
-              defaultMessage: 'Name',
-            })}
-          />
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label={intl.formatMessage({
-            id: 'app.operator.chainCode.form.create.version',
-            defaultMessage: 'Version',
-          })}
-          name="version"
-          initialValue=""
-          rules={[
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'app.operator.chainCode.form.create.checkVersion',
-                defaultMessage: 'Please enter the chain code version',
-              }),
-            },
-          ]}
-        >
-          <Input
-            placeholder={intl.formatMessage({
-              id: 'app.operator.chainCode.form.create.version',
-              defaultMessage: 'Version',
-            })}
-          />
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label={intl.formatMessage({
-            id: 'app.operator.chainCode.form.create.language',
-            defaultMessage: 'Language',
-          })}
-          name="language"
-          rules={[
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'app.operator.chainCode.form.create.checkLanguage',
-                defaultMessage: 'Please select language',
-              }),
-            },
-          ]}
-        >
-          <Select>{languageOptions}</Select>
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label={intl.formatMessage({
-            id: 'app.operator.chainCode.form.create.md5',
-            defaultMessage: 'md5',
-          })}
-          name="md5"
-          initialValue=""
-          rules={[
-            {
-              required: true,
-              message: intl.formatMessage({
-                id: 'app.operator.chainCode.form.create.checkMd5',
-                defaultMessage: 'Please enter the md5',
-              }),
-            },
-          ]}
-        >
-          <Input
-            placeholder={intl.formatMessage({
-              id: 'app.operator.chainCode.form.create.md5',
-              defaultMessage: 'md5',
-            })}
-          />
-        </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label={intl.formatMessage({
             id: 'app.operator.chainCode.form.create.file',
             defaultMessage: 'file',
           })}
-          name="file"
+          name="ChainCodePackage"
           getValueFromEvent={normFile}
           rules={[
             {
               required: true,
               message: intl.formatMessage({
                 id: 'app.operator.chainCode.form.create.fileSelect',
-                defaultMessage: 'Please select the chain code file',
+                defaultMessage: 'Please select the chaincode package',
               }),
             },
           ]}
+          extra="Only tar.gz files are allowed"
         >
           <Upload {...uploadProps}>
             <Button disabled={!!newFile}>
               <UploadOutlined />
               {intl.formatMessage({
                 id: 'app.operator.chainCode.form.create.fileSelect',
-                defaultMessage: 'Please select the chain code file',
+                defaultMessage: 'Please select the chaincode package',
               })}
             </Button>
           </Upload>
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label={intl.formatMessage({
+            id: 'app.operator.chainCode.form.create.description',
+            defaultMessage: 'Description',
+          })}
+          name="Description"
+          initialValue=""
+          rules={[
+            {
+              required: false,
+              message: intl.formatMessage({
+                id: 'app.operator.chainCode.form.create.checkDescription',
+                defaultMessage: 'Please enter the chaincode description',
+              }),
+            },
+          ]}
+        >
+          <Input
+            placeholder={intl.formatMessage({
+              id: 'app.operator.chainCode.form.create.description',
+              defaultMessage: 'Description',
+            })}
+          />
         </FormItem>
       </Form>
     </Modal>
@@ -235,6 +163,10 @@ const UploadChainCode = props => {
   chainCode,
   loadingChainCodes: loading.effects['chainCode/listChainCode'],
   uploading: loading.effects['chainCode/uploadChainCode'],
+  installing: loading.effects['chainCode/installChainCode'],
+  approving: loading.effects['chainCode/approveChainCode'],
+  Committing: loading.effects['chainCode/commitChainCode'],
+  loadingOrgs: loading.effects['chainCode/listOrgs'], // TODO: should be chainCode/listOrgs?
 }))
 class ChainCode extends PureComponent {
   state = {
@@ -242,6 +174,8 @@ class ChainCode extends PureComponent {
     formValues: {},
     newFile: '',
     modalVisible: false,
+    installModalVisible: false,
+    commitModalVisible: false,
   };
 
   componentDidMount() {
@@ -285,6 +219,30 @@ class ChainCode extends PureComponent {
     });
   };
 
+  handleSelectRows = rows => {
+    this.setState({
+      selectedRows: rows,
+    });
+  };
+
+  handleInstallModalVisible = visible => {
+    this.setState({
+      installModalVisible: !!visible,
+    });
+  };
+
+  handleApproveModalVisible = visible => {
+    this.setState({
+      approveModalVisible: !!visible,
+    });
+  };
+
+  handleCommitModalVisible = visible => {
+    this.setState({
+      commitModalVisible: !!visible,
+    });
+  };
+
   handleUpload = (values, callback) => {
     const { dispatch } = this.props;
     const formData = new FormData();
@@ -300,6 +258,37 @@ class ChainCode extends PureComponent {
     });
   };
 
+  // TODO
+  handleInstall = (values, callback) => {
+    const { dispatch } = this.props;
+    const formData = new FormData();
+
+    Object.keys(values).forEach(key => {
+      formData.append(key, values[key]);
+    });
+
+    dispatch({
+      type: 'chainCode/installChainCode',
+      payload: formData,
+      callback,
+    });
+  };
+
+  handleApprove = (values, callback) => {
+    const { dispatch } = this.props;
+    const formData = new FormData();
+
+    Object.keys(values).forEach(key => {
+      formData.append(key, values[key]);
+    });
+
+    dispatch({
+      type: 'chainCode/approveChainCode',
+      payload: formData,
+      callback,
+    });
+  };
+
   onUploadChainCode = () => {
     this.handleModalVisible(true);
   };
@@ -309,12 +298,23 @@ class ChainCode extends PureComponent {
   };
 
   render() {
-    const { selectedRows, modalVisible, newFile } = this.state;
     const {
-      chainCode: { chainCodes, pagination },
+      selectedRows,
+      modalVisible,
+      newFile,
+      installModalVisible,
+      approveModalVisible,
+      commitModalVisible,
+    } = this.state;
+    const {
+      // chainCode: { chainCodes, pagination },
       loadingChainCodes,
       intl,
       uploading,
+      installing,
+      approving,
+      Committing,
+      loadingOrgs,
     } = this.props;
 
     const formProps = {
@@ -328,13 +328,73 @@ class ChainCode extends PureComponent {
       intl,
     };
 
+    const installFormProps = {
+      installModalVisible,
+      handleInstall: this.handleInstall,
+      handleInstallModalVisible: this.handleInstallModalVisible,
+      fetchChainCodes: this.fetchChainCodes,
+      installing,
+      intl,
+    };
+
+    const approveFormProps = {
+      approveModalVisible,
+      handleApprove: this.handleApprove,
+      handleApproveModalVisible: this.handleApproveModalVisible,
+      fetchChainCodes: this.fetchChainCodes,
+      approving,
+      loadingOrgs,
+      selectedRows: [],
+      intl,
+    };
+
+    const commitFormProps = {
+      commitModalVisible,
+      handleCommit: this.handleCommit,
+      handleCommitModalVisible: this.handleCommitModalVisible,
+      fetchChainCodes: this.fetchChainCodes,
+      Committing,
+      loadingOrgs,
+      selectedRows: [],
+      intl,
+    };
+
+    const menu = record => (
+      <Menu>
+        <Menu.Item>
+          <a
+            onClick={() => {
+              this.handleRegisterUser(record);
+            }}
+          >
+            {intl.formatMessage({
+              id: 'app.operator.chainCode.delete',
+              defaultMessage: 'Delete',
+            })}
+          </a>
+        </Menu.Item>
+      </Menu>
+    );
+
+    const MoreBtn = () => (
+      <Dropdown overlay={menu}>
+        <a>
+          {intl.formatMessage({
+            id: 'app.operator.node.table.operation.more',
+            defaultMessage: 'More',
+          })}{' '}
+          <DownOutlined />
+        </a>
+      </Dropdown>
+    );
+
     const columns = [
       {
         title: intl.formatMessage({
-          id: 'app.operator.chainCode.table.header.name',
-          defaultMessage: 'Name',
+          id: 'app.operator.chainCode.table.header.packageID',
+          defaultMessage: 'PackageID',
         }),
-        dataIndex: 'name',
+        dataIndex: 'packageID',
       },
       {
         title: intl.formatMessage({
@@ -346,23 +406,17 @@ class ChainCode extends PureComponent {
       {
         title: intl.formatMessage({
           id: 'app.operator.chainCode.table.header.language',
-          defaultMessage: 'Language',
+          defaultMessage: 'Chaincode Language',
         }),
         dataIndex: 'language',
       },
       {
         title: intl.formatMessage({
-          id: 'app.operator.chainCode.table.header.time',
-          defaultMessage: 'Time',
+          id: 'app.operator.chainCode.table.header.description',
+          defaultMessage: 'Description',
         }),
-        dataIndex: 'create_ts',
-      },
-      {
-        title: intl.formatMessage({
-          id: 'app.operator.chainCode.table.header.md5',
-          defaultMessage: 'MD5',
-        }),
-        dataIndex: 'md5',
+        dataIndex: 'description',
+        ellipsis: true,
       },
       {
         title: intl.formatMessage({
@@ -372,28 +426,62 @@ class ChainCode extends PureComponent {
         // eslint-disable-next-line no-unused-vars
         render: (text, record) => (
           <Fragment>
-            <a>
+            <a onClick={() => this.handleInstallModalVisible(true)}>
               {intl.formatMessage({
                 id: 'app.operator.chainCode.table.operate.install',
                 defaultMessage: 'Install',
               })}
             </a>
             <Divider type="vertical" />
-            <a className={styles.danger}>
+            {!record.approve && (
+              <>
+                <a onClick={() => this.handleApproveModalVisible(true)}>
+                  {intl.formatMessage({
+                    id: 'app.operator.chainCode.table.operate.approve',
+                    defaultMessage: 'Approve',
+                  })}
+                </a>
+                <Divider type="vertical" />
+              </>
+            )}
+            <a onClick={() => this.handleCommitModalVisible(true)}>
               {intl.formatMessage({
-                id: 'app.operator.chainCode.table.operate.delete',
-                defaultMessage: 'Delete',
+                id: 'app.operator.chainCode.table.operate.commit',
+                defaultMessage: 'Commit',
               })}
             </a>
+            <Divider type="vertical" />
+            <MoreBtn />
           </Fragment>
         ),
       },
     ];
+    const dummyList = [
+      {
+        packageID: 'cc1v1:cc7bb5f50a53c207f68d37e9423c32f968083282e5ffac00d41ffc5768dc1873',
+        description: 'chaincode demo',
+        version: 'v1',
+        language: 'golang',
+        approve: false,
+      },
+      {
+        packageID: 'cc2v1:a971e147ef8f411b4a2476bba1de26b9a9a84553c43a90204f662ca72ee93911',
+        description: 'new chaincode demo',
+        version: 'v1',
+        language: 'golang',
+        approve: true,
+      },
+    ];
+    const dummyPagination = {
+      total: 0,
+      current: 1,
+      pageSize: 10,
+    };
     return (
       <PageHeaderWrapper
         title={intl.formatMessage({
           id: 'app.operator.chainCode.title',
-          defaultMessage: 'Chain code management',
+          defaultMessage: 'Chaincode management',
         })}
       >
         <Card bordered={false}>
@@ -401,16 +489,23 @@ class ChainCode extends PureComponent {
             <div className={styles.tableListOperator}>
               <Button type="primary" onClick={this.onUploadChainCode}>
                 <PlusOutlined />
-                {intl.formatMessage({ id: 'form.button.new', defaultMessage: 'New' })}
+                {intl.formatMessage({
+                  id: 'form.button.upload',
+                  defaultMessage: 'Upload Chaincode',
+                })}
               </Button>
             </div>
             <StandardTable
               selectedRows={selectedRows}
               loading={loadingChainCodes}
               rowKey="id"
+              // data={{
+              //   list: chainCodes,
+              //   pagination,
+              // }}
               data={{
-                list: chainCodes,
-                pagination,
+                list: dummyList,
+                pagination: dummyPagination,
               }}
               columns={columns}
               onSelectRow={this.handleSelectRows}
@@ -419,6 +514,9 @@ class ChainCode extends PureComponent {
           </div>
         </Card>
         <UploadChainCode {...formProps} />
+        <InstallForm {...installFormProps} />
+        <ApproveForm {...approveFormProps} />
+        <CommitForm {...commitFormProps} />
       </PageHeaderWrapper>
     );
   }
